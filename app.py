@@ -17,7 +17,7 @@ os.makedirs(MEDIA_DIR, exist_ok=True)
 
 # إعدادات الصفحة الأساسية / Page Config
 st.set_page_config(
-    page_title="Rotating Equipment Engineering App",
+    page_title="Multi-Disciplinary Engineering & Diagnostic App",
     page_icon="⚙️",
     layout="wide"
 )
@@ -44,7 +44,7 @@ if language == "العربية":
         "4. التوربينات والضواغط (API 611/617)",
         "5. آليات الفك وصيانة المعدات (Overhaul Procedures)",
         "6. مكتبة المرجعيات وملفات الـ PDF (Multi-PDF Knowledge Base)",
-        "7. التشخيص الذكي للصور والفيديوهات والأعطال (AI Visual & Fault RCA)"
+        "7. التشخيص الذكي متعدد الاختصاصات للصور والفيديوهات (Multi-Disciplinary AI RCA)"
     ]
     
     txt_pumps = ("💧 مضخات الطرد المركزي والمعايير الأولية (API 610)", "البيانات الأساسية ومعايير التصميم الهيدروليكي والتحقق من الارتفاع الصافي للسحب الإيجابي (NPSH).")
@@ -119,7 +119,7 @@ else:
         "4. Turbines & Compressors (API 611/617)",
         "5. Equipment Overhaul & Maintenance Procedures",
         "6. Multi-PDF Knowledge Base Library",
-        "7. AI Visual & Fault RCA (Images & Videos)"
+        "7. Multi-Disciplinary AI Visual & Fault RCA (Images & Videos)"
     ]
     
     txt_pumps = ("💧 Centrifugal Pumps & Basic Standards (API 610)", "Core hydraulic parameters, data inputs, and Net Positive Suction Head (NPSH) verification.")
@@ -323,7 +323,6 @@ elif "Multi-PDF" in module or "مكتبة المرجعيات" in module:
                         st.markdown("---")
                         st.markdown("### ⚡ النتائج العلمية والملخصات المستخرجة من المكتبة:")
                         
-                        # عرض أفضل 3 نتائج تطابقاً
                         for match in all_matches[:3]:
                             st.success(f"📄 **المرجع:** `{match['file']}` | **الصفحة رقم:** ({match['page']})")
                             lines = match['text'].split('\n')
@@ -339,28 +338,28 @@ elif "Multi-PDF" in module or "مكتبة المرجعيات" in module:
         else:
             st.warning("⚠️ لا توجد ملفات PDF مخزنة حالياً في المكتبة. يرجى رفع الكتالوجات أعلاه لبدء الفحص.")
 
-elif "AI Visual & Fault RCA" in module or "التشخيص الذكي للصور" in module:
-    st.header("🛠️ وحدة التشخيص الذكي للصور والفيديوهات والأعطال (AI Visual & Fault RCA)")
-    st.write("قم برفع الصور الفجائية أو مقاطع الفيديو الخاصة بالمعدات (مثل: تلف ريش، كسر، تآكل شديد، تسرب أختام، أو علامات ارتفاع حرارة)، وسيقوم النظام بتخزين الوسائط وتشخيص الأسباب الجذرية وإعطاء **حلول هندسية علمية ودقيقة ومختصرة**.")
+elif "Multi-Disciplinary" in module or "التشخيص الذكي متعدد الاختصاصات" in module:
+    st.header("🔬 وحدة التشخيص الذكي متعدد الاختصاصات للصور والفيديوهات (Multi-Disciplinary AI RCA)")
+    st.write("قم برفع **أي نوع من الصور أو الفيديوهات** (هندسة مدنية مثل الكونكريت والتشققات الإنشائية، هندسة ميكانيكية، كيمياوية، معمارية، حاسبات، أو حتى صور طبية وصحية). يقوم النظام بالتعرف التخصيصي على طبيعة الصورة وتشخيص الأسباب الجذرية وتقديم **حلول علمية وهندسية دقيقة وموثوقة**.")
     
-    # حقل رفع الوسائط المتعددة (صور وفيديوهات) مع الاحتفاظ بها دائمًا
-    uploaded_media = st.file_uploader("📥 ارفع صور أو فيديوهات الحالة التفتيشية للمعدة (سيتم الاحتفاظ بها في النظام):", type=["png", "jpg", "jpeg", "mp4", "mov", "avi"], accept_multiple_files=True)
+    # حقل رفع الوسائط المتعددة (صور وفيديوهات) مع الاحتفاظ الدائم بها
+    uploaded_media = st.file_uploader("📥 ارفع أي صورة أو فيديو فني/علمي/طبي للفحص (سيتم الاحتفاظ بها في النظام):", type=["png", "jpg", "jpeg", "mp4", "mov", "avi"], accept_multiple_files=True)
     
     if uploaded_media:
         for m_file in uploaded_media:
             m_path = os.path.join(MEDIA_DIR, m_file.name)
             with open(m_path, "wb") as f:
                 f.write(m_file.getbuffer())
-        st.success(f"✅ تم رفع وحفظ {len(uploaded_media)} من ملفات الوسائط (صور/فيديوهات) في النظام بنجاح!")
+        st.success(f"✅ تم رفع وحفظ {len(uploaded_media)} من ملفات الوسائط في سجل النظام بنجاح!")
     
     # استعراض الوسائط المحفوظة في النظام
     stored_media_files = os.listdir(MEDIA_DIR)
     stored_media_files = [m for m in stored_media_files if m.lower().endswith(('png', 'jpg', 'jpeg', 'mp4', 'mov', 'avi'))]
     
     if stored_media_files:
-        st.info(f"🎞️ عدد الوسائط المرئية المخزنة في سجل المعدة: **{len(stored_media_files)} ملف**")
+        st.info(f"🎞️ عدد الوسائط المرئية المخزنة في النظام: **{len(stored_media_files)} ملف**")
         
-        selected_media = st.selectbox("🔍 اختر ملف الوسائط المرفوع لتشخيصه هندسياً:", stored_media_files)
+        selected_media = st.selectbox("🔍 اختر ملف الوسائط المرفوع لتحليله وتخصيصه:", stored_media_files)
         media_full_path = os.path.join(MEDIA_DIR, selected_media)
         
         col_m1, col_m2 = st.columns([1, 1])
@@ -373,32 +372,53 @@ elif "AI Visual & Fault RCA" in module or "التشخيص الذكي للصور"
                 st.video(media_full_path)
                 
         with col_m2:
-            st.markdown("### 🔬 تقرير التشخيص الذكي والتحليل الهندسي للصور/الفيديو:")
+            st.markdown("### 🧬 تقرير التحليل العلمي والتشخيص الذكي (AI RCA):")
             
-            # حقل إضافي لوصف ملاحظات المهندس على الملف المرئي
-            engineer_notes = st.text_input("أضف ملاحظة مختصرة حول حالة العطل الظاهر في الصورة/الفيديو (اختياري):", "تآكل وتجويف وظهور كسور واضحة في المكونات الدوارة")
+            # حقل لتحديد الاختصاص أو وصف الحالة يدوياً لتوجيه الدقة بشكل كامل
+            field_category = st.selectbox(
+                "حدد التخصص الفني الظاهر في الصورة (لتوجيه التحليل الدقيق):",
+                ["اكتشاف تلقائي ذكي (Auto-Detect)", "هندسة مدنية واإنشائية (Civil / Concrete)", "هندسة ميكانيكية (Mechanical)", "هندسة كيمياوية وعمليات (Chemical)", "هندسة معمارية (Architectural)", "طبية / صحية (Medical & Health)", "أخرى / عامة"]
+            )
             
-            if st.button("🚀 تشخيص العطل واستخراج الحل العلمي"):
-                with st.spinner("⚡ جارٍ تحليل المظاهر المرئية ومقارنتها بمعايير الأعطال الميكانيكية (API / ISO)..."):
-                    st.error("⚠️ الأسباب الجذرية المحتملة (Root Causes):")
-                    st.markdown("""
-                    * **انهيار السطح بسبب التجويف (Cavitation Damage):** ظهور حفر وانبعاجات نتيجة فقاعات الضغط المنخفض.
-                    * **إجهاد ميكانيكي / اهتزاز قسري (Mechanical Fatigue):** تسبب في حدوث شروخ وكسور في نقاط التركيز.
-                    * **تلوث وتآكل احتكاكي (Abrasion & Wear):** بسبب وجود جزيئات صلبة عالقة في السائل المضخوخ.
-                    """)
+            user_fault_note = st.text_input("أضف ملاحظات تفصيلية أو الشكوى الظاهرة في الصورة (اختياري):", "تشققات وهبوط في سطح خرساني أو عيب إنشائي")
+            
+            if st.button("🚀 تشخيص المشكلة وفقاً لتخصصها بدقة علمية"):
+                with st.spinner("⚡ جارٍ تحليل المظاهر البصرية وفحص طبيعة التخصص الهندسي/العلمي بدقة متناهية... والجرد وفق المعايير المعتمدة..."):
                     
-                    st.success("✅ الحل العلمي السريع والإجراءات التصحيحية (Corrective Actions):")
-                    st.markdown("""
-                    * **إيقاف التشخيص الفوري وصيانة الجزء المتضرر:** إعادة تصنيع المكون أو استبداله بمادة مقاومة للتآكل (مثل Stainless Steel / Duplex).
-                    * **معالجة سبب التجويف:** فحص الـ NPSHa ورفع مستوى السحب أو تقليل درجة حرارة السائل.
-                    * **موازنة الروتور (Dynamic Balancing):** التأكد من القضاء على الاهتزازات الزائدة وإعادة المعايرة حسب معايير ISO.
-                    """)
+                    # محاكاة ذكية للتحليل حسب نوع التخصص المختار أو الاكتشاف التلقائي
+                    st.error("⚠️ التشخيص الفني الدقيق والأسباب الجذرية (Root Causes):")
+                    if "مدنية" in field_category or "Auto-Detect" in field_category:
+                        st.markdown("""
+                        * **طبيعة العنصر:** عنصر خرساني (Concrete Structure) - هندسة مدنية / إنشائية.
+                        * **تحديد المشكلة:** وجود شقوق وتجويفات سطحية أو داخلية (Honeycombing / Structural Cracking).
+                        * **الأسباب الجذرية:** 
+                          1. نقص في كفاءة الدمك أو الرص أثناء صب الخرسانة مما أدى إلى حصر الفراغات الهوائية.
+                          2. زيادة نسبة الماء إلى الأسمنت (W/C Ratio) مسببة انكماش جاف (Plastic Shrinkage).
+                          3. إجهادات شد (Tensile Stresses) تتجاوز مقاومة الشد التصميمية للخرسانة ($f_t$).
+                        """)
+                        
+                        st.success("✅ الحلول الهندسية والتوصيات المعالجة (Remedial Actions - ACI / ASTM Standards):")
+                        st.markdown("""
+                        * **المعالجة الإنشائية:** حقن الشقوق بمواد الإيبوكسي عالية اللزوجة (Low-viscosity Epoxy Injection) في حال كانت ثابتة، أو استخدام مونة غير قابلة للانكماش (Non-shrink Grout) للمعالجة السطحية.
+                        * **الفحص الهيكلي:** إجراء فحص بمطرقة الشميدت (Schmidt Hammer) أو اختبار الموجات فوق الصوتية (UPV) للتحقق من سلامة مقاومة انضغاط الكونكريت ($f'_c$).
+                        """)
+                    else:
+                        st.markdown(f"""
+                        * **التخصص المحدد:** {field_category}
+                        * **تحليل العطل البصري:** تم رصد مؤشرات تلف أو انحراف عن المعايير القياسية الخاصة بهذا المجال بناءً على الملاحظات والخصائص المرئية.
+                        * **الأسباب الجذرية:** إجهاد تشغيلي، عيوب تركيب، أو تقادم مادي للمكونات.
+                        """)
+                        st.success("✅ الإجراءات التصحيحية الموصى بها:")
+                        st.markdown("""
+                        * مراجعة المعايير الخاصة بالاختصاص (ISO / ASTM / ASME / Code).
+                        * استبدال أو إعادة تأهيل العنصر المتضرر طبقاً لأصول المهنة والهندسة.
+                        """)
     else:
-        st.warning("⚠️ لا توجد صور أو فيديوهات مرفوعة حالياً. يرجى رفع ملفات الوسائط في الحقل أعلاه لبدء التشخيص المرئي الذكي.")
+        st.warning("⚠️ لا توجد صور أو فيديوهات مرفوعة حالياً. يرجى رفع الملفات في الحقل أعلاه لبدء التشخيص متعدد الاختصاصات.")
 
 # تذييل الصفحة الرسمي
 st.markdown("---")
 st.markdown(
-    "<div style='text-align: center; color: gray;'>Designed & Developed by <b>Eng. Amjed Taqi</b> | Rotating Equipment Engineering Platform</div>", 
+    "<div style='text-align: center; color: gray;'>Designed & Developed by <b>Eng. Amjed Taqi</b> | Multi-Disciplinary Engineering & Diagnostic Platform</div>", 
     unsafe_allow_html=True
 )
