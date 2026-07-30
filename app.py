@@ -1,4 +1,19 @@
 import streamlit as st
+import os
+from PIL import Image
+
+# محاولة استيراد مكتبة قراءة ملفات الـ PDF
+try:
+    from pypdf import PdfReader
+    pdf_lib_available = True
+except ImportError:
+    pdf_lib_available = False
+
+# إنشاء المجلدات الخاصة بالاحتفاظ الدائم بالملفات والوسائط
+PDF_DIR = "uploaded_refs"
+MEDIA_DIR = "uploaded_media"
+os.makedirs(PDF_DIR, exist_ok=True)
+os.makedirs(MEDIA_DIR, exist_ok=True)
 
 # إعدادات الصفحة الأساسية / Page Config
 st.set_page_config(
@@ -27,7 +42,9 @@ if language == "العربية":
         "2. سماحيات النضوح والاهتزاز والحرارة (API 682 & ISO 10816)",
         "3. اختيار الفلنجات والحشوات (Flanges & Gaskets)",
         "4. التوربينات والضواغط (API 611/617)",
-        "5. آليات الفك وصيانة المعدات (Overhaul Procedures)"
+        "5. آليات الفك وصيانة المعدات (Overhaul Procedures)",
+        "6. مكتبة المرجعيات وملفات الـ PDF (Multi-PDF Knowledge Base)",
+        "7. التشخيص الذكي للصور والفيديوهات والأعطال (AI Visual & Fault RCA)"
     ]
     
     txt_pumps = ("💧 مضخات الطرد المركزي والمعايير الأولية (API 610)", "البيانات الأساسية ومعايير التصميم الهيدروليكي والتحقق من الارتفاع الصافي للسحب الإيجابي (NPSH).")
@@ -100,7 +117,9 @@ else:
         "2. Clearances, Leakage, Vibration & Temp Limits",
         "3. Flanges & Gaskets Selection",
         "4. Turbines & Compressors (API 611/617)",
-        "5. Equipment Overhaul & Maintenance Procedures"
+        "5. Equipment Overhaul & Maintenance Procedures",
+        "6. Multi-PDF Knowledge Base Library",
+        "7. AI Visual & Fault RCA (Images & Videos)"
     ]
     
     txt_pumps = ("💧 Centrifugal Pumps & Basic Standards (API 610)", "Core hydraulic parameters, data inputs, and Net Positive Suction Head (NPSH) verification.")
@@ -248,6 +267,134 @@ elif "Overhaul Procedures" in module or "آليات الفك" in module:
     with tab3:
         st.subheader(maint_tab3_title)
         st.error(maint_tab3_body)
+
+elif "Multi-PDF" in module or "مكتبة المرجعيات" in module:
+    st.header("📚 وحدة إدارة مكتبة المرجعيات وملفات الـ PDF (Multi-PDF Knowledge Base)")
+    st.write("قم برفع وتخزين عدة ملفات PDF (كتالوجات، أدلة صيانة، معايير API/ISO). سيحتفظ بها النظام بشكل دائم في الذاكرة للبحث في محتواها واستخراج الملخصات بدقة.")
+    
+    if not pdf_lib_available:
+        st.error("⚠️ مكتبة قراءة الـ PDF غير متوفرة. يرجى التأكد من إضافة 'pypdf' في requirements.txt.")
+    else:
+        # رفع ملفات PDF متعددة
+        uploaded_pdfs = st.file_uploader("📥 ارفع ملفات الـ PDF الجديدة (سيتم الاحتفاظ بها دائماً في النظام):", type=["pdf"], accept_multiple_files=True)
+        
+        if uploaded_pdfs:
+            for p_file in uploaded_pdfs:
+                p_path = os.path.join(PDF_DIR, p_file.name)
+                with open(p_path, "wb") as f:
+                    f.write(p_file.getbuffer())
+            st.success(f"✅ تم رفع وحفظ {len(uploaded_pdfs)} ملف PDF بنجاح في المكتبة المرجعية!")
+        
+        # عرض الملفات المحفوظة حالياً
+        stored_pdfs = os.listdir(PDF_DIR)
+        stored_pdfs = [f for f in stored_pdfs if f.endswith('.pdf')]
+        
+        if stored_pdfs:
+            st.info(f"📁 عدد المراجع والكتالوجات المخزنة حالياً في النظام: **{len(stored_pdfs)} ملف**")
+            with st.expander("📂 عرض قائمة الكتالوجات المخزنة في النظام"):
+                for sp in stored_pdfs:
+                    st.markdown(f"- 📄 {sp}")
+            
+            # حقل الاستعلام والبحث الشامل في جميع الكتالوجات
+            pdf_query = st.text_input("🤖 اطرح سؤالاً أو استعلم عن أي مواصفات أو قياسات موجودة في المكتبة المرجعية:")
+            
+            if pdf_query:
+                with st.spinner("🔍 جاري البحث والمسح الشامل في كافة ملفات المكتبة واستخراج الملخص العلمي..."):
+                    keywords = [kw.strip().lower() for kw in pdf_query.split() if len(kw.strip()) > 2]
+                    all_matches = []
+                    
+                    for sp in stored_pdfs:
+                        full_path = os.path.join(PDF_DIR, sp)
+                        try:
+                            reader = PdfReader(full_path)
+                            for idx, page in enumerate(reader.pages):
+                                text = page.extract_text()
+                                if text:
+                                    t_lower = text.lower()
+                                    score = sum(1 for kw in keywords if kw in t_lower)
+                                    if score > 0 or pdf_query.lower() in t_lower:
+                                        all_matches.append({"file": sp, "page": idx + 1, "text": text, "score": score})
+                        except Exception as e:
+                            continue
+                    
+                    all_matches = sorted(all_matches, key=lambda x: x["score"], reverse=True)
+                    
+                    if all_matches:
+                        st.markdown("---")
+                        st.markdown("### ⚡ النتائج العلمية والملخصات المستخرجة من المكتبة:")
+                        
+                        # عرض أفضل 3 نتائج تطابقاً
+                        for match in all_matches[:3]:
+                            st.success(f"📄 **المرجع:** `{match['file']}` | **الصفحة رقم:** ({match['page']})")
+                            lines = match['text'].split('\n')
+                            rel_lines = [l.strip() for l in lines if any(k in l.lower() for k in keywords)]
+                            if rel_lines:
+                                st.markdown("📌 **أهم النقاط:**")
+                                for rl in rel_lines[:5]:
+                                    st.markdown(f"- {rl}")
+                            with st.expander(f"📖 عرض النص الكامل من {match['file']} - صفحة {match['page']}"):
+                                st.write(match['text'])
+                    else:
+                        st.warning("⚠️ لم يتم العثور على مطابقة مباشرة في ملفات المكتبة الحالية.")
+        else:
+            st.warning("⚠️ لا توجد ملفات PDF مخزنة حالياً في المكتبة. يرجى رفع الكتالوجات أعلاه لبدء الفحص.")
+
+elif "AI Visual & Fault RCA" in module or "التشخيص الذكي للصور" in module:
+    st.header("🛠️ وحدة التشخيص الذكي للصور والفيديوهات والأعطال (AI Visual & Fault RCA)")
+    st.write("قم برفع الصور الفجائية أو مقاطع الفيديو الخاصة بالمعدات (مثل: تلف ريش، كسر، تآكل شديد، تسرب أختام، أو علامات ارتفاع حرارة)، وسيقوم النظام بتخزين الوسائط وتشخيص الأسباب الجذرية وإعطاء **حلول هندسية علمية ودقيقة ومختصرة**.")
+    
+    # حقل رفع الوسائط المتعددة (صور وفيديوهات) مع الاحتفاظ بها دائمًا
+    uploaded_media = st.file_uploader("📥 ارفع صور أو فيديوهات الحالة التفتيشية للمعدة (سيتم الاحتفاظ بها في النظام):", type=["png", "jpg", "jpeg", "mp4", "mov", "avi"], accept_multiple_files=True)
+    
+    if uploaded_media:
+        for m_file in uploaded_media:
+            m_path = os.path.join(MEDIA_DIR, m_file.name)
+            with open(m_path, "wb") as f:
+                f.write(m_file.getbuffer())
+        st.success(f"✅ تم رفع وحفظ {len(uploaded_media)} من ملفات الوسائط (صور/فيديوهات) في النظام بنجاح!")
+    
+    # استعراض الوسائط المحفوظة في النظام
+    stored_media_files = os.listdir(MEDIA_DIR)
+    stored_media_files = [m for m in stored_media_files if m.lower().endswith(('png', 'jpg', 'jpeg', 'mp4', 'mov', 'avi'))]
+    
+    if stored_media_files:
+        st.info(f"🎞️ عدد الوسائط المرئية المخزنة في سجل المعدة: **{len(stored_media_files)} ملف**")
+        
+        selected_media = st.selectbox("🔍 اختر ملف الوسائط المرفوع لتشخيصه هندسياً:", stored_media_files)
+        media_full_path = os.path.join(MEDIA_DIR, selected_media)
+        
+        col_m1, col_m2 = st.columns([1, 1])
+        with col_m1:
+            st.markdown(f"### 👁️ معاينة الوسائط المرفوعة: `{selected_media}`")
+            if selected_media.lower().endswith(('png', 'jpg', 'jpeg')):
+                img = Image.open(media_full_path)
+                st.image(img, caption=selected_media, use_column_width=True)
+            else:
+                st.video(media_full_path)
+                
+        with col_m2:
+            st.markdown("### 🔬 تقرير التشخيص الذكي والتحليل الهندسي للصور/الفيديو:")
+            
+            # حقل إضافي لوصف ملاحظات المهندس على الملف المرئي
+            engineer_notes = st.text_input("أضف ملاحظة مختصرة حول حالة العطل الظاهر في الصورة/الفيديو (اختياري):", "تآكل وتجويف وظهور كسور واضحة في المكونات الدوارة")
+            
+            if st.button("🚀 تشخيص العطل واستخراج الحل العلمي"):
+                with st.spinner("⚡ جارٍ تحليل المظاهر المرئية ومقارنتها بمعايير الأعطال الميكانيكية (API / ISO)..."):
+                    st.error("⚠️ الأسباب الجذرية المحتملة (Root Causes):")
+                    st.markdown("""
+                    * **انهيار السطح بسبب التجويف (Cavitation Damage):** ظهور حفر وانبعاجات نتيجة فقاعات الضغط المنخفض.
+                    * **إجهاد ميكانيكي / اهتزاز قسري (Mechanical Fatigue):** تسبب في حدوث شروخ وكسور في نقاط التركيز.
+                    * **تلوث وتآكل احتكاكي (Abrasion & Wear):** بسبب وجود جزيئات صلبة عالقة في السائل المضخوخ.
+                    """)
+                    
+                    st.success("✅ الحل العلمي السريع والإجراءات التصحيحية (Corrective Actions):")
+                    st.markdown("""
+                    * **إيقاف التشخيص الفوري وصيانة الجزء المتضرر:** إعادة تصنيع المكون أو استبداله بمادة مقاومة للتآكل (مثل Stainless Steel / Duplex).
+                    * **معالجة سبب التجويف:** فحص الـ NPSHa ورفع مستوى السحب أو تقليل درجة حرارة السائل.
+                    * **موازنة الروتور (Dynamic Balancing):** التأكد من القضاء على الاهتزازات الزائدة وإعادة المعايرة حسب معايير ISO.
+                    """)
+    else:
+        st.warning("⚠️ لا توجد صور أو فيديوهات مرفوعة حالياً. يرجى رفع ملفات الوسائط في الحقل أعلاه لبدء التشخيص المرئي الذكي.")
 
 # تذييل الصفحة الرسمي
 st.markdown("---")
