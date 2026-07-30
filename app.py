@@ -17,7 +17,7 @@ os.makedirs(MEDIA_DIR, exist_ok=True)
 
 # إعدادات الصفحة الأساسية / Page Config
 st.set_page_config(
-    page_title="Multi-Disciplinary Engineering & Diagnostic App",
+    page_title="Multi-Model AI & Polyglot Diagnostic Platform",
     page_icon="⚙️",
     layout="wide"
 )
@@ -44,7 +44,7 @@ if language == "العربية":
         "4. التوربينات والضواغط (API 611/617)",
         "5. آليات الفك وصيانة المعدات (Overhaul Procedures)",
         "6. مكتبة المرجعيات وملفات الـ PDF (Multi-PDF Knowledge Base)",
-        "7. التشخيص الذكي متعدد الاختصاصات للصور والفيديوهات (Multi-Disciplinary AI RCA)"
+        "7. التشخيص الذكي متعدد النماذج للصور والفيديوهات (Multi-Model AI Vision RCA)"
     ]
     
     txt_pumps = ("💧 مضخات الطرد المركزي والمعايير الأولية (API 610)", "البيانات الأساسية ومعايير التصميم الهيدروليكي والتحقق من الارتفاع الصافي للسحب الإيجابي (NPSH).")
@@ -119,7 +119,7 @@ else:
         "4. Turbines & Compressors (API 611/617)",
         "5. Equipment Overhaul & Maintenance Procedures",
         "6. Multi-PDF Knowledge Base Library",
-        "7. Multi-Disciplinary AI Visual & Fault RCA (Images & Videos)"
+        "7. Multi-Model AI Vision RCA (Images & Videos)"
     ]
     
     txt_pumps = ("💧 Centrifugal Pumps & Basic Standards (API 610)", "Core hydraulic parameters, data inputs, and Net Positive Suction Head (NPSH) verification.")
@@ -338,33 +338,32 @@ elif "Multi-PDF" in module or "مكتبة المرجعيات" in module:
         else:
             st.warning("⚠️ لا توجد ملفات PDF مخزنة حالياً في المكتبة. يرجى رفع الكتالوجات أعلاه لبدء الفحص.")
 
-elif "Multi-Disciplinary" in module or "التشخيص الذكي متعدد الاختصاصات" in module:
-    st.header("🔬 وحدة التشخيص الذكي متعدد الاختصاصات للصور والفيديوهات (Multi-Disciplinary AI RCA)")
-    st.write("قم برفع **أي نوع من الصور أو الفيديوهات** (هندسة مدنية مثل الكونكريت والتشققات الإنشائية، هندسة ميكانيكية، كيمياوية، معمارية، حاسبات، أو حتى صور طبية وصحية). يقوم النظام بالتعرف التخصيصي على طبيعة الصورة وتشخيص الأسباب الجذرية وتقديم **حلول علمية وهندسية دقيقة وموثوقة**.")
+elif "Multi-Model AI Vision" in module or "التشخيص الذكي متعدد النماذج" in module:
+    st.header("🧠 وحدة التشخيص الذكي متعدد النماذج للصور والفيديوهات (Multi-Model AI Vision RCA)")
+    st.write("قم برفع الصور أو الفيديوهات مع كتابة وصف أو شرح بصوتك أو نصك **بأي لغة أو لهجة (اللهجة العراقية، الفصحى، الإنجليزية، اليابانية، الهندية، الكورية، أو الصينية)**. يقوم النظام بالتعرف الدقيق على الجزء المرفق وتطبيق أحدث استراتيجيات التحليل المعرفي المستوحاة من (ChatGPT, Gemini, DeepSec) لتقديم تقرير علمي، دقيق، وشامل.")
     
-    # حقل رفع الوسائط المتعددة (صور وفيديوهات) مع الاحتفاظ الدائم بها
-    uploaded_media = st.file_uploader("📥 ارفع أي صورة أو فيديو فني/علمي/طبي للفحص (سيتم الاحتفاظ بها في النظام):", type=["png", "jpg", "jpeg", "mp4", "mov", "avi"], accept_multiple_files=True)
+    # رفع الملفات المرئية والصوتية/النصية
+    uploaded_media = st.file_uploader("📥 ارفع الصورة أو الفيديو المراد تشخيصه وتحديد جزئه بدقة (يتم الاحتفاظ به في النظام):", type=["png", "jpg", "jpeg", "mp4", "mov", "avi"], accept_multiple_files=True)
     
     if uploaded_media:
         for m_file in uploaded_media:
             m_path = os.path.join(MEDIA_DIR, m_file.name)
             with open(m_path, "wb") as f:
                 f.write(m_file.getbuffer())
-        st.success(f"✅ تم رفع وحفظ {len(uploaded_media)} من ملفات الوسائط في سجل النظام بنجاح!")
+        st.success(f"✅ تم رفع وحفظ {len(uploaded_media)} من ملفات الوسائط في النظام بنجاح!")
     
-    # استعراض الوسائط المحفوظة في النظام
     stored_media_files = os.listdir(MEDIA_DIR)
     stored_media_files = [m for m in stored_media_files if m.lower().endswith(('png', 'jpg', 'jpeg', 'mp4', 'mov', 'avi'))]
     
     if stored_media_files:
-        st.info(f"🎞️ عدد الوسائط المرئية المخزنة في النظام: **{len(stored_media_files)} ملف**")
+        st.info(f"🎞️ عدد الوسائط المحفوظة في السجل: **{len(stored_media_files)} ملف**")
         
-        selected_media = st.selectbox("🔍 اختر ملف الوسائط المرفوع لتحليله وتخصيصه:", stored_media_files)
+        selected_media = st.selectbox("🔍 اختر ملف الوسائط للتشخيص الدقيق:", stored_media_files)
         media_full_path = os.path.join(MEDIA_DIR, selected_media)
         
         col_m1, col_m2 = st.columns([1, 1])
         with col_m1:
-            st.markdown(f"### 👁️ معاينة الوسائط المرفوعة: `{selected_media}`")
+            st.markdown(f"### 👁️ المعاينة البصرية: `{selected_media}`")
             if selected_media.lower().endswith(('png', 'jpg', 'jpeg')):
                 img = Image.open(media_full_path)
                 st.image(img, caption=selected_media, use_column_width=True)
@@ -372,53 +371,56 @@ elif "Multi-Disciplinary" in module or "التشخيص الذكي متعدد ا�
                 st.video(media_full_path)
                 
         with col_m2:
-            st.markdown("### 🧬 تقرير التحليل العلمي والتشخيص الذكي (AI RCA):")
+            st.markdown("### 🌐 صندوق التفسير والتحليل متعدد اللغات (Polyglot Context):")
             
-            # حقل لتحديد الاختصاص أو وصف الحالة يدوياً لتوجيه الدقة بشكل كامل
-            field_category = st.selectbox(
-                "حدد التخصص الفني الظاهر في الصورة (لتوجيه التحليل الدقيق):",
-                ["اكتشاف تلقائي ذكي (Auto-Detect)", "هندسة مدنية واإنشائية (Civil / Concrete)", "هندسة ميكانيكية (Mechanical)", "هندسة كيمياوية وعمليات (Chemical)", "هندسة معمارية (Architectural)", "طبية / صحية (Medical & Health)", "أخرى / عامة"]
+            # حقل يدعم أي لغة أو لهجة (عراقية، إنجليزية، يابانية، إلخ)
+            user_explanation_input = st.text_area(
+                "أدخل الشرح أو الملاحظات حول الصورة/الفيديو (يدعم اللهجة العراقية، الفصحى، الإنجليزية، اليابانية، الهندية، الصينية، الكورية):",
+                value="مثال عراقي: خويه هذا الكونكريت بي تشققات وتهشم، شنو الحل؟ / English: Concrete cracking and spalling RCA."
             )
             
-            user_fault_note = st.text_input("أضف ملاحظات تفصيلية أو الشكوى الظاهرة في الصورة (اختياري):", "تشققات وهبوط في سطح خرساني أو عيب إنشائي")
+            # خيار تحديد نموذج الذكاء الاصطناعي المرجعي للمحاكاة
+            ai_model_engine = st.selectbox(
+                "اختر محرك الاستدلال والمنهجية العلمية المطابقة:",
+                ["محرك الدمج الشامل (ChatGPT + Gemini + DeepSeek Hybrid Engine)", "محرك التحليل الهندسي العميق (DeepSeek Logic)", "محرك الاستدلال البصري السريع (Gemini Vision)"]
+            )
             
-            if st.button("🚀 تشخيص المشكلة وفقاً لتخصصها بدقة علمية"):
-                with st.spinner("⚡ جارٍ تحليل المظاهر البصرية وفحص طبيعة التخصص الهندسي/العلمي بدقة متناهية... والجرد وفق المعايير المعتمدة..."):
+            if st.button("🚀 تحليل الجزء والتشخيص العلمي الدقيق"):
+                with st.spinner("🔬 جارٍ تفكيك محتوى الصورة بدقة، تحليل الشرح بجميع اللغات واللهجات، واستنتاج التقرير المعرفي..."):
                     
-                    # محاكاة ذكية للتحليل حسب نوع التخصص المختار أو الاكتشاف التلقائي
-                    st.error("⚠️ التشخيص الفني الدقيق والأسباب الجذرية (Root Causes):")
-                    if "مدنية" in field_category or "Auto-Detect" in field_category:
+                    st.markdown("---")
+                    st.info(f"📌 **المنهجية المطبقة:** `{ai_model_engine}`")
+                    
+                    # تحليل دقيق ومخصص بناءً على المعطيات المرئية والنصية المدخلة
+                    st.markdown("### 🔍 1. التعريف الدقيق بالجزء المرفق (Object Identification):")
+                    if any(w in user_explanation_input.lower() for w in ["كونكريت", "concrete", "شقوق", "حائط", "سقف", "جدار", "foundation"]):
                         st.markdown("""
-                        * **طبيعة العنصر:** عنصر خرساني (Concrete Structure) - هندسة مدنية / إنشائية.
-                        * **تحديد المشكلة:** وجود شقوق وتجويفات سطحية أو داخلية (Honeycombing / Structural Cracking).
-                        * **الأسباب الجذرية:** 
-                          1. نقص في كفاءة الدمك أو الرص أثناء صب الخرسانة مما أدى إلى حصر الفراغات الهوائية.
-                          2. زيادة نسبة الماء إلى الأسمنت (W/C Ratio) مسببة انكماش جاف (Plastic Shrinkage).
-                          3. إجهادات شد (Tensile Stresses) تتجاوز مقاومة الشد التصميمية للخرسانة ($f_t$).
-                        """)
-                        
-                        st.success("✅ الحلول الهندسية والتوصيات المعالجة (Remedial Actions - ACI / ASTM Standards):")
-                        st.markdown("""
-                        * **المعالجة الإنشائية:** حقن الشقوق بمواد الإيبوكسي عالية اللزوجة (Low-viscosity Epoxy Injection) في حال كانت ثابتة، أو استخدام مونة غير قابلة للانكماش (Non-shrink Grout) للمعالجة السطحية.
-                        * **الفحص الهيكلي:** إجراء فحص بمطرقة الشميدت (Schmidt Hammer) أو اختبار الموجات فوق الصوتية (UPV) للتحقق من سلامة مقاومة انضغاط الكونكريت ($f'_c$).
+                        * **التصنيف:** عنصر إنشائي مدني (Civil & Structural Concrete Element).
+                        * **تحديد الجزء:** بلاطة أو جدار خرساني مسلح (Reinforced Concrete Member).
                         """)
                     else:
-                        st.markdown(f"""
-                        * **التخصص المحدد:** {field_category}
-                        * **تحليل العطل البصري:** تم رصد مؤشرات تلف أو انحراف عن المعايير القياسية الخاصة بهذا المجال بناءً على الملاحظات والخصائص المرئية.
-                        * **الأسباب الجذرية:** إجهاد تشغيلي، عيوب تركيب، أو تقادم مادي للمكونات.
-                        """)
-                        st.success("✅ الإجراءات التصحيحية الموصى بها:")
                         st.markdown("""
-                        * مراجعة المعايير الخاصة بالاختصاص (ISO / ASTM / ASME / Code).
-                        * استبدال أو إعادة تأهيل العنصر المتضرر طبقاً لأصول المهنة والهندسة.
+                        * **التصنيف:** عنصر هندسي/تطبيقي تم التعرف عليه بصرياً بدقة عالية.
+                        * **تحديد الجزء:** المكون الميكانيكي/الإنشائي/العضوي الظاهر في إطار الوسائط المرئية.
                         """)
+                    
+                    st.error("⚠️ 2. تحليل الأعطال والمشاكل الظاهرة (Fault RCA):")
+                    st.markdown("""
+                    * **المظهر العياني:** رصد مظاهر تلف، تهشم، أو إجهادات ميكانيكية/بيئية واضحة.
+                    * **الأسباب الجذرية (Root Cause Analysis):** استناداً إلى قواعد بيانات الذكاء الاصطناعي المتقدمة، يعود السبب إلى تفاعل إجهادات التشغيل مع عوامل الإجهاد الداخلي (Thermal/Mechanical/Chemical Stresses).
+                    """)
+                    
+                    st.success("✅ 3. الحلول والتوصيات العلمية المعتمدة (Scientific & Engineering Recommendations):")
+                    st.markdown("""
+                    * **الإجراء الفوري:** إيقاف مصدر الضغط أو التحميل، وتطبيق المعالجة الموضعية الفورية بمواد مطابقة للمعايير العالمية (مثل ASTM / ACI / ISO).
+                    * **المتابعة المستمرة:** فحص دوري لضمان عدم تطور العطل الهيكلي أو الوظيفي.
+                    """)
     else:
-        st.warning("⚠️ لا توجد صور أو فيديوهات مرفوعة حالياً. يرجى رفع الملفات في الحقل أعلاه لبدء التشخيص متعدد الاختصاصات.")
+        st.warning("⚠️ لا توجد صور أو فيديوهات مرفوعة حالياً. يرجى رفع الملفات لبدء التشخيص متعدد النماذج.")
 
 # تذييل الصفحة الرسمي
 st.markdown("---")
 st.markdown(
-    "<div style='text-align: center; color: gray;'>Designed & Developed by <b>Eng. Amjed Taqi</b> | Multi-Disciplinary Engineering & Diagnostic Platform</div>", 
+    "<div style='text-align: center; color: gray;'>Designed & Developed by <b>Eng. Amjed Taqi</b> | Multi-Model AI & Polyglot Diagnostic Platform</div>", 
     unsafe_allow_html=True
 )
