@@ -10,7 +10,7 @@ st.set_page_config(
 # اختيار اللغة / Language Selection
 language = st.sidebar.selectbox("🌐 Choose Language / اختر اللغة", ["English", "العربية"])
 
-# النصوص والتصاميم حسب اللغة / Localized Text Dictionaries
+# النصوص والتصاميم حسب اللغة
 if language == "العربية":
     title_auth = "🔐 بوابة التحكم والصلاحيات"
     label_passkey = "أدخل الرمز السري (Passkey):"
@@ -18,61 +18,71 @@ if language == "العربية":
     succ_passkey = "✅ تم التحقق بنجاح (صلاحيات كاملة)"
     sidebar_header = "📂 الوحدات الهندسية"
     
-    # معلومات المطور بالعربية
     dev_title = "👨‍💻 مطور التطبيق والمصمم الهندسي:"
     dev_name = "المهندس: أمجد تقي (Amjed Taqi)"
     dev_role = "مهندس ميكانيك معدات دوارة (Rotating Equipment Mechanical Engineer)"
     
     modules_list = [
-        "1. مضخات الطرد المركزي (API 610 & NPSH)",
-        "2. اختيار الفلنجات والحشوات (Flanges & Gaskets Design)",
-        "3. التوربينات والضواغط (API 611/617)",
-        "4. تشخيص الاهتزازات (ISO 10816)",
+        "1. مضخات الطرد المركزي والمعايير (API 610 & Limits)",
+        "2. سماحيات النضوح والاهتزاز والحرارة (API 682 & ISO 10816)",
+        "3. اختيار الفلنجات والحشوات (Flanges & Gaskets)",
+        "4. التوربينات والضواغط (API 611/617)",
         "5. آليات الفك وصيانة المعدات (Overhaul Procedures)"
     ]
     
-    txt_pumps = ("💧 مضخات الطرد المركزي (API 610 & NPSH)", "إدخال حسابات مضخات الطرد المركزي والارتفاع الصافي للسحب الإيجابي طبقاً لـ API 610.")
-    txt_turbines = ("🔄 التوربينات والضواغط (API 611/617)", "تقييم أداء التوربينات البخارية وضواغط الطرد المركزي وتصاميمها الهندسية.")
-    txt_vibration = ("📊 تشخيص الاهتزازات (ISO 10816)", "تشخيص اهتزازات المعدات الدوارة ومقارنتها بمعايير القبول والرفض حسب الفئات.")
+    txt_pumps = ("💧 مضخات الطرد المركزي والمعايير الأولية (API 610)", "البيانات الأساسية ومعايير التصميم الهيدروليكي والتحقق من الارتفاع الصافي للسحب الإيجابي (NPSH).")
     
-    # محتوى تصميم الفلنجات والحشوات بالعربية
+    limits_header = "📊 معايير القبول العالمية للسماحيات، النضوح، الاهتزاز والحرارة (API / ISO)"
+    limits_desc = "استعلم عن الحدود المسموحة لاهتزازات المعدات، تسرب الأختام الميكانيكية، ودرجات حرارة المحامل."
+    
+    tab_limits = ["النضوح والأختام (API 682)", "الاهتزازات (ISO 10816)", "درجات الحرارة (Bearing/Casing)", "السماحيات والخلوصات الداخلية"]
+    
+    l_tab1_title = "معدلات النضوح المسموحة للأختام الميكانيكية (API 682 / EPA):"
+    l_tab1_body = """
+    * **الأختام المفردة (Single Seals):** النضوح المرئي غير مسموح؛ معدل تسرب الأبخرة أو السوائل الهيدروكربونية الخفيفة يجب ألا يتجاوز الحدود البيئية المحلية.
+    * **الأختام المزدوجة (Dual Pressurized):** سائل الحاجز (Barrier Fluid) يجب ألا يظهر فيه تلوث أو معدل استهلاك غير طبيعي.
+    * **Gas Seals (الأختام الغازية):** تسرب الغاز العازل يتم مراقبته بدقة عبر مقاييس التدفق لضمان سلامة الفتحات.
+    """
+    
+    l_tab2_title = "معايير حدود الاهتزازات للمضخات (ISO 10816-3):"
+    l_tab2_body = """
+    * **الفئة الأولى والثانية (مضخات مثبتة بقواعد صلبة):**
+      * **Zone A (ممتاز):** القيمة الفعالة لسرعة الاهتزاز أقل من **2.8 مم/ثانية**.
+      * **Zone B (مقبول):** بين **2.8 إلى 4.5 مم/ثانية**.
+      * **Zone C (إنذار):** بين **4.5 إلى 11.2 مم/ثانية**.
+      * **Zone D (خطر / إيقاف طارئ):** أكبر من **11.2 مم/ثانية**.
+    """
+    
+    l_tab3_title = "حدود درجات الحرارة التشغيلية للمحامل (Bearings):"
+    l_tab3_body = """
+    * **المحامل الانزلاقية (Journal & Thrust Bearings):** الحد الأقصى المسموح به لدرجة حرارة المعدن **85°C إلى 95°C**، والإنذار عند **100°C** والترِب عند **105°C - 110°C**.
+    * **محامل الدارجة (Ball Bearings):** ألا تتجاوز حرارة الحلقة الخارجية **70°C إلى 80°C**.
+    """
+
+    l_tab4_title = "السماحيات والخلوصات الهندسية الأساسية (API 610):"
+    l_tab4_body = """
+    * **خلوصات حلقات التآكل (Wear Rings Clearances):** تعتمد على قطر الروتور (الخلوص القطري بحدود 0.35 إلى 0.5 مم للأحجام القياسية المتوسطة).
+    * **انحراف العمود (Max Shaft Runout):** أقصى سماحية لانحراف عمود الدوران يجب ألا تتجاوز **0.025 إلى 0.05 مم (TIR)**.
+    """
+
     flange_header = "🔧 وحدة اختيار الفلنجات والحشوات الهندسية (ASME B16.5 / B16.20)"
-    flange_desc = "أدخل قياس الفلنجة (NPS) ومستوى الضغط (Pressure Rating) لمعرفة أبعاد الكازكيت المناسب والمسامير المطلوبة."
-    
+    flange_desc = "أدخل قياس الفلنجة (NPS) ومستوى الضغط لمعرفة أبعاد الكازكيت والمسامير."
     label_nps = "اختر حجم الفلنجة الاسمي (NPS - Inches):"
     label_rating = "اختر تصنيف الضغط (Pressure Rating - Class):"
-    
     res_title = "📋 النتائج الهندسية والمواصفات المعتمدة:"
     res_gasket_type = "نوع الحشوة المناسبة (Gasket Type):"
     res_gasket_dim = "أبعاد الـ Gasket التقريبية (ID x OD):"
     res_bolts = "مسامير التثبيت المطلوبة (Stud Bolts):"
-    res_note = "ملاحظة هندسية: تأكد من استخدام عزم الدوران المحدد (Torque Specs) وتطبيق شد متسلسل متعاكس (Star Pattern)."
+    res_note = "ملاحظة هندسية: تأكد من استخدام عزم الدوران المحدد وتطبيق شد متسلسل متعاكس."
 
-    # محتوى الصيانة بالعربية
     maint_header = "⚙️ آليات فتح وصيانة المعدات الدوارة"
     tab_names = ["إجراءات الفك والتركيب", "فحص الخلوصات والقياسات", "احتياطات السلامة (LOTO)"]
-    
     maint_tab1_title = "خطوات فك وفتح المضخات وعمليات العمرة (Overhaul):"
-    maint_tab1_body = """
-    1. **عزل المعدة:** قطع مصدر الطاقة الكهربائية وتطبيق نظام الإغلاق ووضع العلامات (LOTO)، مع إغلاق صمامات السحب والضغط.
-    2. **التصريف والتطهير:** تفريغ السائل المحبوس داخل غلاف المضخة (Casing) وتبريد النظام إذا كان يتعامل مع سوائل ساخنة.
-    3. **فك الأنابيب والوصلات:** فصل أنابيب السحب والطرخ وفك مسامير قواعد التثبيت المرنة (Coupling alignment bolts).
-    4. **سحب الروتور (Rotor Extraction):** فك غلاف المحمل (Bearing housing) بحذر، وسحب عمود الدوران والمروحة (Impeller) باستخدام أدوات سحب مخصصة لتجنب تلف الأعمدة.
-    """
-    
+    maint_tab1_body = "1. العزل وتطبيق نظام LOTO.\n2. التصريف والتطهير.\n3. فصل الأنابيب والوصلات.\n4. سحب الروتور بحذر."
     maint_tab2_title = "معايير القياس والفحص الهندسي:"
-    maint_tab2_body = """
-    * **فحص الانحراف (Shaft Runout):** قياس استقامة عمود الدوران باستخدام مؤشر القياس الساعهي (Dial Indicator) والتأكد من وقوعه ضمن حدود السماحية للكتالوج.
-    * **خلوصات الحلقات التآكلية (Wear Rings Clearances):** قياس القطر الداخلي والخارجي لحلقات التآكل لتحديد نسب التسرب الداخلي والكفاءة الحجمية.
-    * **فحص المحامل (Bearings):** التأكد من خلو رمان البلي من التآكل أو التقشر، وقياس خلوصات المحامل الانزلاقية (Journal/Thrust Bearings) بدقة.
-    """
-    
-    maint_tab3_title = "متطلبات السلامة الحرجة أثناء الصيانة:"
-    maint_tab3_body = """
-    * التأكد من عدم وجود ضغط محبوس داخل خطوط الغلاف أو الأختام الميكانيكية.
-    * استخدام أدوات غير قابلة للشرر (Non-sparking tools) في بيئات الغازات القابلة للاشتعال.
-    * الالتزام بارتداء معدات الوقاية الشخصية (PPE) الكاملة أثناء رفع الثقالات بالرافعة الجسرية (Overhead Crane).
-    """
+    maint_tab2_body = "* فحص الانحراف.\n* خلوصات الحلقات.\n* فحص المحامل."
+    maint_tab3_title = "متطلبات السلامة الحرجة:"
+    maint_tab3_body = "التأكد من عدم وجود ضغط محبوس واستخدام أدوات غير قابلة للشرر."
 
 else:
     title_auth = "🔐 Access Control"
@@ -81,73 +91,63 @@ else:
     succ_passkey = "✅ Verified Successfully (Full Access)"
     sidebar_header = "📂 Engineering Modules"
     
-    # Developer info in English
     dev_title = "👨‍💻 App Developer & Lead Engineer:"
     dev_name = "Eng. Amjed Taqi"
     dev_role = "Rotating Equipment Mechanical Engineer"
     
     modules_list = [
-        "1. Centrifugal Pumps (API 610 & NPSH)",
-        "2. Flanges & Gaskets Selection",
-        "3. Turbines & Compressors (API 611/617)",
-        "4. Vibration Diagnostics (ISO 10816)",
+        "1. Centrifugal Pumps & Basic Standards (API 610)",
+        "2. Clearances, Leakage, Vibration & Temp Limits",
+        "3. Flanges & Gaskets Selection",
+        "4. Turbines & Compressors (API 611/617)",
         "5. Equipment Overhaul & Maintenance Procedures"
     ]
     
-    txt_pumps = ("💧 Centrifugal Pumps (API 610 & NPSH)", "Calculations for centrifugal pumps, Net Positive Suction Head (NPSH), and API 610 design criteria.")
-    txt_turbines = ("🔄 Turbines & Compressors (API 611/617)", "Performance evaluation for steam turbines and centrifugal compressors.")
-    txt_vibration = ("📊 Vibration Diagnostics (ISO 10816)", "Rotating equipment vibration diagnostics and ISO standards comparison.")
+    txt_pumps = ("💧 Centrifugal Pumps & Basic Standards (API 610)", "Core hydraulic parameters, data inputs, and Net Positive Suction Head (NPSH) verification.")
     
-    # Flanges and Gaskets content in English
+    limits_header = "📊 Global Acceptance Standards for Clearances, Leakage, Vibration & Temperature"
+    limits_desc = "Check allowable machinery vibration severity limits, mechanical seal leakage criteria, and bearing temperature bounds."
+    
+    tab_limits = ["Seal Leakage (API 682)", "Vibration Limits (ISO 10816)", "Temperature Limits", "Clearances & Runout"]
+    
+    l_tab1_title = "Allowable Mechanical Seal Leakage Rates (API 682 / EPA):"
+    l_tab1_body = "Single seals and dual pressurized seal parameters according to standard EPA and API guidelines."
+    l_tab2_title = "Pump Vibration Severity Limits (ISO 10816-3):"
+    l_tab2_body = "Zone A (< 2.8 mm/s), Zone B (2.8 - 4.5 mm/s), Zone C (4.5 - 11.2 mm/s), Zone D (> 11.2 mm/s)."
+    l_tab3_title = "Bearing Operational Temperature Limits:"
+    l_tab3_body = "Journal bearings max 85°C - 95°C, alarm at 100°C, trip at 105°C - 110°C."
+    l_tab4_title = "Core Engineering Clearances & Runout (API 610):"
+    l_tab4_body = "Wear ring clearances and max shaft runout TIR limits."
+
     flange_header = "🔧 Engineering Flanges & Gaskets Selection Module (ASME B16.5 / B16.20)"
-    flange_desc = "Select nominal pipe size (NPS) and pressure rating to determine appropriate spiral wound gasket dimensions and bolt specifications."
-    
+    flange_desc = "Select NPS and pressure rating to determine gasket dimensions and bolt specs."
     label_nps = "Select Nominal Pipe Size (NPS - Inches):"
     label_rating = "Select Pressure Rating (Class):"
-    
     res_title = "📋 Engineering Results & Standard Specifications:"
     res_gasket_type = "Recommended Gasket Type:"
     res_gasket_dim = "Approximate Gasket Dimensions (ID x OD):"
     res_bolts = "Required Stud Bolts Specifications:"
-    res_note = "Engineering Note: Ensure specified torque values are applied using a criss-cross (star) tightening pattern."
+    res_note = "Engineering Note: Apply specified torque values using a criss-cross pattern."
 
-    # Maintenance content in English
     maint_header = "⚙️ Equipment Overhaul & Maintenance Procedures"
     tab_names = ["Disassembly & Assembly", "Clearances & Inspection", "Safety (LOTO)"]
-    
-    maint_tab1_title = "Pump Disassembly & Overhaul Steps:"
-    maint_tab1_body = """
-    1. **Isolation:** Disconnect electrical power, apply Lockout/Tagout (LOTO), and close suction/discharge valves.
-    2. **Draining & Purging:** Drain trapped liquid from the pump casing and cool down the system if handling hot fluids.
-    3. **Disconnection:** Disconnect piping and remove coupling alignment bolts.
-    4. **Rotor Extraction:** Carefully remove bearing housings, extract the shaft and impeller using specialized pullers to prevent shaft damage.
-    """
-    
-    maint_tab2_title = "Engineering Inspection & Measurement Standards:"
-    maint_tab2_body = """
-    * **Shaft Runout Check:** Measure shaft straightness using a dial indicator to ensure it falls within manufacturer tolerances.
-    * **Wear Rings Clearances:** Measure inner and outer diameters of wear rings to determine internal leakage and volumetric efficiency.
-    * **Bearings Inspection:** Check for wear or pitting, and precisely measure journal/thrust bearing clearances.
-    """
-    
-    maint_tab3_title = "Critical Safety Requirements During Maintenance:"
-    maint_tab3_body = """
-    * Ensure no trapped pressure exists inside the casing or mechanical seal lines.
-    * Use non-sparking tools in flammable gas environments.
-    * Wear full Personal Protective Equipment (PPE) during heavy lifting operations with the overhead crane.
-    """
+    maint_tab1_title = "Pump Disassembly Steps:"
+    maint_tab1_body = "1. LOTO isolation.\n2. Draining.\n3. Disconnection.\n4. Rotor extraction."
+    maint_tab2_title = "Inspection Standards:"
+    maint_tab2_body = "* Runout check.\n* Wear rings.\n* Bearings."
+    maint_tab3_title = "Critical Safety:"
+    maint_tab3_body = "Ensure no trapped pressure and use non-sparking tools."
 
-# عرض معلومات المطور في القائمة الجانبية / Sidebar Developer Card
+# عرض معلومات المطور في القائمة الجانبية
 st.sidebar.markdown("---")
 st.sidebar.markdown(f"### {dev_title}")
 st.sidebar.info(f"**{dev_name}**\n\n*{dev_role}*")
 st.sidebar.markdown("---")
 
-# شاشة تسجيل الدخول / Authentication Sidebar
+# شاشة تسجيل الدخول
 st.sidebar.title(title_auth)
 passkey_input = st.sidebar.text_input(label_passkey, type="password")
-
-CORRECT_PASSKEY = "12345"  # الرمز السري الخاص بك
+CORRECT_PASSKEY = "12345"
 
 if passkey_input != CORRECT_PASSKEY:
     st.sidebar.warning(warn_passkey)
@@ -156,16 +156,45 @@ else:
     st.sidebar.success(succ_passkey)
     user_role = "Engineer / Admin"
 
-# القائمة الجانبية للوحدات / Sidebar Modules Navigation
+# القائمة الجانبية للوحدات
 st.sidebar.header(sidebar_header)
 module = st.sidebar.radio("Select / اختر:", modules_list)
 
-# عرض محتوى الوحدات / Render Modules Content
-if "Centrifugal Pumps" in module or "مضخات الطرد المركزي" in module:
+# محتوى الوحدات الهندسية
+if "Centrifugal Pumps" in module or "مضخات الطرد المركزي والمعايير الأولية" in module:
     st.header(txt_pumps[0])
     st.write(txt_pumps[1])
+    
+    st.markdown("### المدخلات الأولية لتصميم وتشغيل المضخة (API 610 Data Inputs)")
+    col_a, col_b = st.columns(2)
+    with col_a:
+        flow_rate = st.number_input("معدل التدفق التصميمي (Flow Rate - $m^3/h$):", value=150.0)
+        head_val = st.number_input("الارتفاع الهيدروليكي المطلوب (Total Head - $m$):", value=75.0)
+    with col_b:
+        speed_val = st.number_input("السرعة الدورانية (Speed - $RPM$):", value=2950.0)
+        npsha_val = st.number_input("الضغط الإيجابي المتوفر للسحب ($NPSHa$ - $m$):", value=4.5)
+        
+    st.info("💡 يتم استخدام هذه المعطيات الأولية لحساب الكفاءة الهيدروليكية ومقارنة الـ NPSHa مع الـ NPSHr المطلوب.")
 
-elif "Flanges & Gaskets" in module or "اختيار الفلنجات" in module:
+elif "Clearances, Leakage, Vibration" in module or "سماحيات النضوح والاهتزاز" in module:
+    st.header(limits_header)
+    st.write(limits_desc)
+    
+    t1, t2, t3, t4 = st.tabs(tab_limits)
+    with t1:
+        st.subheader(l_tab1_title)
+        st.markdown(l_tab1_body)
+    with t2:
+        st.subheader(l_tab2_title)
+        st.markdown(l_tab2_body)
+    with t3:
+        st.subheader(l_tab3_title)
+        st.markdown(l_tab3_body)
+    with t4:
+        st.subheader(l_tab4_title)
+        st.markdown(l_tab4_body)
+
+elif "Flanges & Gaskets" in module or "اختيار الفلنجات والحشوات" in module:
     st.header(flange_header)
     st.write(flange_desc)
     
@@ -178,7 +207,6 @@ elif "Flanges & Gaskets" in module or "اختيار الفلنجات" in module:
     st.markdown("---")
     st.subheader(res_title)
     
-    # قاعدة بيانات هندسية مبسطة للفلنجات والكازكيت (ASME B16.5 / B16.20)
     gasket_data = {
         ("2\"", "Class 150"): {"id": "60.5 mm", "od": "104.8 mm", "bolts": "4 nos. of 5/8\" UNC (Length: 85 mm)"},
         ("2\"", "Class 300"): {"id": "60.5 mm", "od": "111.1 mm", "bolts": "8 nos. of 5/8\" UNC (Length: 95 mm)"},
@@ -196,41 +224,32 @@ elif "Flanges & Gaskets" in module or "اختيار الفلنجات" in module:
         ("12\"", "Class 300"): {"id": "323.8 mm", "od": "422.2 mm", "bolts": "16 nos. of 1-1/8\" UNC (Length: 165 mm)"}
     }
     
-    # البحث عن القياس أو جلب قياس تقريبي افتراضي إذا لم يكن مدرجاً بدقة
     key = (nps_size, pressure_class)
     selected_result = gasket_data.get(key, {"id": "Standard ASME ID", "od": "Standard ASME OD", "bolts": "Standard ASME Studs"})
     
-    st.success(f"**{res_gasket_type}** Spiral Wound Gasket (SS304/Grafoil with Inner/Outer Ring) - ASME B16.20")
+    st.success(f"**{res_gasket_type}** Spiral Wound Gasket (SS304/Grafoil) - ASME B16.20")
     st.write(f"**{res_gasket_dim}** ID: {selected_result['id']} | OD: {selected_result['od']}")
     st.write(f"**{res_bolts}** {selected_result['bolts']}")
     st.info(res_note)
 
 elif "Turbines & Compressors" in module or "التوربينات والضواغط" in module:
-    st.header(txt_turbines[0])
-    st.write(txt_turbines[1])
-
-elif "Vibration Diagnostics" in module or "تشخيص الاهتزازات" in module:
-    st.header(txt_vibration[0])
-    st.write(txt_vibration[1])
+    st.header("🔄 Turbines & Compressors (API 611/617)")
+    st.write("تقييم أداء التوربينات البخارية وضواغط الطرد المركزي.")
 
 elif "Overhaul Procedures" in module or "آليات الفك" in module:
     st.header(maint_header)
-    
     tab1, tab2, tab3 = st.tabs(tab_names)
-    
     with tab1:
         st.subheader(maint_tab1_title)
         st.markdown(maint_tab1_body)
-        
     with tab2:
         st.subheader(maint_tab2_title)
         st.markdown(maint_tab2_body)
-        
     with tab3:
         st.subheader(maint_tab3_title)
         st.error(maint_tab3_body)
 
-# تذييل الصفحة الرسمي يوضح اسمك كمهندس ومطور
+# تذييل الصفحة الرسمي
 st.markdown("---")
 st.markdown(
     "<div style='text-align: center; color: gray;'>Designed & Developed by <b>Eng. Amjed Taqi</b> | Rotating Equipment Engineering Platform</div>", 
