@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 from PIL import Image
+import torch
 
 # محاولة استيراد مكتبة قراءة ملفات الـ PDF
 try:
@@ -8,6 +9,13 @@ try:
     pdf_lib_available = True
 except ImportError:
     pdf_lib_available = False
+
+# محاولة استيراد مكتبات توليد الصور المحلية
+try:
+    from diffusers import StableDiffusionPipeline
+    image_gen_lib_available = True
+except ImportError:
+    image_gen_lib_available = False
 
 # إنشاء المجلدات الخاصة بالاحتفاظ الدائم بالملفات والوسائط
 PDF_DIR = "uploaded_refs"
@@ -45,7 +53,8 @@ if language == "العربية":
         "5. آليات الفك وصيانة المعدات (Overhaul Procedures)",
         "6. مكتبة المرجعيات وملفات الـ PDF (Multi-PDF Knowledge Base)",
         "7. التشخيص الذكي متعدد النماذج للصور والفيديوهات (Multi-Model AI Vision RCA)",
-        "8. محادثة الخبراء الذكية والتوضيح (Interactive AI Chat & Q&A)"
+        "8. محادثة الخبراء الذكية والتوضيح (Interactive AI Chat & Q&A)",
+        "9. وحدة توليد الصور العامة والحرة (Free Image Generator)"
     ]
     
     txt_pumps = ("💧 مضخات الطرد المركزي والمعايير الأولية (API 610)", "البيانات الأساسية ومعايير التصميم الهيدروليكي والتحقق من الارتفاع الصافي للسحب الإيجابي (NPSH).")
@@ -121,7 +130,8 @@ else:
         "5. Equipment Overhaul & Maintenance Procedures",
         "6. Multi-PDF Knowledge Base Library",
         "7. Multi-Model AI Vision RCA (Images & Videos)",
-        "8. Interactive AI Chat & Q&A"
+        "8. Interactive AI Chat & Q&A",
+        "9. Free Image Generator Module"
     ]
     
     txt_pumps = ("💧 Centrifugal Pumps & Basic Standards (API 610)", "Core hydraulic parameters, data inputs, and Net Positive Suction Head (NPSH) verification.")
@@ -465,6 +475,49 @@ elif "Interactive AI Chat" in module or "محادثة الخبراء الذكي�
                 
                 st.markdown(response_text)
                 st.session_state.messages.append({"role": "assistant", "content": response_text})
+
+elif "Free Image Generator" in module or "وحدة توليد الصور العامة" in module:
+    st.header("🎨 وحدة توليد الصور العامة والحرة (Local AI Image Generator)")
+    st.write("أدخل وصفاً لأي شيء تريده (سواء كانت صوراً فنية، واقعية، خيالية، أو عامة بدون قيود)، وسيتم توليدها محلياً عبر الموديل.")
+    
+    if not image_gen_lib_available:
+        st.error("⚠️ مكتبة توليد الصور (diffusers) غير مثبتة. يرجى التأكد من إضافتها في requirements.txt مع مكتبة torch.")
+    else:
+        user_prompt = st.text_area("أدخل وصف الصورة (Prompt):", value="A futuristic cyberpunk city at night, highly detailed, cinematic lighting")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            image_width = st.selectbox("عرض الصورة (Width):", [512, 768, 1024], index=0)
+        with col2:
+            image_height = st.selectbox("ارتفاع الصورة (Height):", [512, 768, 1024], index=0)
+            
+        if st.button("🚀 توليد الصورة الآن"):
+            if user_prompt:
+                with st.spinner("⏳ جاري توليد الصورة محلياً... (قد يستغرق ذلك بعض الوقت حسب قوة كرت الشاشة GPU):"):
+                    try:
+                        device = "cuda" if torch.cuda.is_available() else "cpu"
+                        dtype = torch.float16 if device == "cuda" else torch.float32
+                        
+                        # تحميل نموذج Stable Diffusion 1.5 الافتراضي
+                        pipe = StableDiffusionPipeline.from_pretrained(
+                            "runwayml/stable-diffusion-v1-5", 
+                            torch_dtype=dtype
+                        )
+                        pipe = pipe.to(device)
+                        
+                        image = pipe(
+                            prompt=user_prompt, 
+                            width=image_width, 
+                            height=image_height
+                        ).images[0]
+                        
+                        st.success("✅ تم توليد الصورة بنجاح!")
+                        st.image(image, caption=f"النتيجة لـ: {user_prompt}", use_column_width=True)
+                        
+                    except Exception as e:
+                        st.error(f"حدث خطأ أثناء التوليد (تأكد من توفر كرت شاشة GPU ومكتبة torch): {e}")
+            else:
+                st.warning("⚠️ يرجى كتابة وصف الصورة أولاً.")
 
 # تذييل الصفحة الرسمي
 st.markdown("---")
